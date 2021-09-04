@@ -1,0 +1,232 @@
+<html>
+  <head>
+    <audio autoplay>
+      <source src="./audio/2F.mp3">
+    </audio>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script>
+    <script src="js/controls/OrbitControls.js"></script>
+    <script>
+      // ページの読み込みを待つ
+      window.addEventListener('load', init);
+
+      function init() {
+        // サイズを指定
+        const width = 1050;
+        const height = 600;
+
+        const canvasElement = document.querySelector('#myCanvas');
+        // レンダラーを作成
+        const renderer = new THREE.WebGLRenderer({
+          canvas: canvasElement,
+          alpha: true,
+        });
+        renderer.setSize(width, height);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        // カメラの初期座標を設定
+        camera.position.set(0, 0, 1000);
+
+        // カメラコントローラーを作成
+        const controls = new THREE.OrbitControls(camera, canvasElement);
+
+        // 滑らかにカメラコントローラーを制御する
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.2;
+
+        // 平行光源を作成
+        const directionalLight = new THREE.DirectionalLight(0xffffff);
+        directionalLight.position.set(1, 0, 10);
+        scene.add(directionalLight);
+
+        //点光源
+        const light = new THREE.PointLight(0xffffff, 90, 50, 1.0);
+        scene.add(light);
+
+        // ポイント光源
+        const pointLight = new THREE.PointLight(0xffffff, 2, 1000);
+        scene.add(pointLight);
+        const pointLightHelper = new THREE.PointLightHelper(pointLight, 70);
+        scene.add(pointLightHelper);
+
+        // マテリアルを作成
+        const material = new THREE.MeshStandardMaterial({
+          map: new THREE.TextureLoader().load('imgs/ers.jpeg'),
+        });
+
+        // 球体の形状を作成します
+        const geometry = new THREE.SphereGeometry(300, 30, 30);
+        
+        // 形状とマテリアルからメッシュを作成します
+        const earthMesh = new THREE.Mesh(geometry, material);
+
+        earthMesh.position.set(300, 0.5, 0.5);
+
+        // シーンにメッシュを追加します
+        scene.add(earthMesh);
+
+        // 星屑を作成します (カメラの動きをわかりやすくするため)
+        createStarField();
+
+        /** 星屑を作成します */
+        function createStarField() {
+          // 頂点情報を格納する配列
+          const vertices = [];
+          // 1000 個の頂点を作成
+          for (let i = 0; i < 1000; i++) {
+            const x = 3000 * (Math.random() - 0.5);
+            const y = 3000 * (Math.random() - 0.5);
+            const z = 3000 * (Math.random() - 0.5);
+
+            vertices.push(x, y, z);
+          }
+
+          // 形状データを作成
+          const geometry = new THREE.BufferGeometry();
+          geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+          // マテリアルを作成
+          const material = new THREE.PointsMaterial({
+            size: 10,
+            color: 0xffffff,
+          });
+
+          // 物体を作成
+          const mesh = new THREE.Points(geometry, material);
+          scene.add(mesh);
+        }
+
+        tick();
+
+        // 毎フレーム時に実行されるループイベントです
+        function tick() {
+          // 地球は常に回転させておく
+        //   earthMesh.rotation.y += 0.00001;
+
+          earthMesh.rotation.x += 0.01;
+          earthMesh.rotation.y += 0.01;
+
+           // ライトを周回させる
+           pointLight.position.set(
+            500 * Math.sin(Date.now() / 400),
+            500 * Math.sin(Date.now() / 1000),
+            500 * Math.cos(Date.now() / 700)
+          );
+
+          // カメラコントローラーを更新
+          controls.update();
+
+          // レンダリング
+          renderer.render(scene, camera);
+
+          requestAnimationFrame(tick);
+        }
+        // 初期化のために実行
+   onResize();
+   // リサイズイベント発生時に実行
+   window.addEventListener('resize', onResize);
+
+   function onResize() {
+     // サイズを取得
+     const width = window.innerWidth;
+     const height = window.innerHeight;
+
+     // レンダラーのサイズを調整する
+     renderer.setPixelRatio(window.devicePixelRatio);
+     renderer.setSize(width, height);
+
+     // カメラのアスペクト比を正す
+     camera.aspect = width / height;
+     camera.updateProjectionMatrix();
+   }
+      }
+    </script>
+  </head>
+
+  <style>
+.example {/*親div*/
+  position: relative;/*相対配置*/
+  width: 100%;
+  height: 100%;
+  }
+
+.example p {
+  background-color: rgba(245, 13, 245, 0.651);
+  position: absolute;
+  top: 50%;
+  left: 30%;
+  -ms-transform: translate(-50%,-50%);
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  margin:0;
+  padding:0;
+  /*文字の装飾は省略*/
+  color: rgba(255, 0, 0, 0.993);/*文字は白に*/
+  font-weight: bold; /*太字に*/
+  font-size: 700%;/*サイズ2倍*/
+  font-family :Quicksand, sans-serif;/*Google Font*/
+  text-align: left;
+  }
+
+  nav {
+	background-color: #92898946;
+	color: rgb(0, 0, 0);
+	position: fixed;
+	width: 100%;
+}
+nav ul {
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+	margin: 0;
+	padding: 6px;
+	list-style-type: none;
+}
+nav a {
+	display: block;
+	border-radius: 4px;
+	padding: 12px 24px;
+	color: rgb(226, 110, 15);
+	text-decoration: none;
+  font-size: 200%;
+}
+nav li a:hover {
+	background-color: #8cae47;
+}
+
+#myCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: url(imgs/ginga2.jpeg) no-repeat center center ;
+      background-size: cover;
+    }
+    #body{
+  margin: 0;
+  overflow: hidden;
+  
+}
+  </style>
+
+  <body>
+    <div class="example">
+      <nav class="regular">
+        <ul>
+          <li><a href="threeJS_7.html">Cube</a></li>
+          <li><a href="threeJS_5.html">Donut</a></li>
+          <li><a href="threeJS_3.html">Earth</a></li>
+          <li><a href="threeJS_10.html">universe</a></li>
+          <li><a href="index.html">Moon</a></li>
+        </ul>
+        </nav>
+    <canvas id="myCanvas"></canvas>
+    <p>Fire SUN</p>	
+　</div>
+   
+  </body>
+</html>

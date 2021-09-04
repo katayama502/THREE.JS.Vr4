@@ -1,0 +1,62 @@
+.example {/*親div*/
+  position: relative;/*相対配置*/
+ 
+  }
+
+.example p {
+    position: absolute;
+  top: 50%;
+  left: 30%;
+  -ms-transform: translate(-50%,-50%);
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  margin:0;
+  padding:0;
+  /*文字の装飾は省略*/
+  color: rgba(248, 232, 7, 0.507);/*文字は白に*/
+  font-weight: bold; /*太字に*/
+  font-size: 700%;/*サイズ2倍*/
+  /* font-family :Quicksand, sans-serif; */
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  nav {
+  background-color: #92898946;
+  color: rgb(0, 0, 0);
+  position: fixed;
+  width: 100%;
+}
+nav ul {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  margin: 0;
+  padding: 6px;
+  list-style-type: none;
+}
+nav a {
+  display: block;
+  border-radius: 4px;
+  padding: 12px 24px;
+  color: rgb(226, 110, 15);
+  text-decoration: none;
+  font-size: 200%;
+}
+nav li a:hover {
+  background-color: #8cae47;
+}
+
+#myCanvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-image:url("../imgs/ginga3.jpeg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+}
+
+#body{
+  margin: 0;
+  overflow: hidden;
+  
+}

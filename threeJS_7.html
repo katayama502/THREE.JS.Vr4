@@ -1,0 +1,196 @@
+<html>
+  <audio autoplay>
+    <source src="./audio/3E.mp3">
+  </audio>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r127/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stats.js/r16/Stats.min.js"></script>
+    <script>
+      // ページの読み込みを待つ
+      window.addEventListener('load', init);
+
+      function init() {
+        // サイズを指定
+        const width = 1100;
+        const height = 540;
+        // 1辺あたりに配置するオブジェクトの個数
+        const CELL_NUM = 20;
+
+        // レンダラーを作成
+        // const renderer = new THREE.WebGLRenderer({
+        //   canvas: document.querySelector('#myCanvas'),
+        // });
+
+        const renderer = new THREE.WebGLRenderer({
+          canvas: document.querySelector('#myCanvas'),
+          alpha: true,
+        });
+        renderer.setPixelRatio(window.devicePixelRatio);
+        renderer.setSize(width, height);
+
+        // シーンを作成
+        const scene = new THREE.Scene();
+
+        // カメラを作成
+        const camera = new THREE.PerspectiveCamera(45, width / height);
+        camera.position.set(0, 0, 400);
+
+        const container = new THREE.Group();
+        scene.add(container);
+
+        // ポイント光源
+        const pointLight = new THREE.PointLight(0xffffff, 60, 1000);
+        scene.add(pointLight);
+        const pointLightHelper = new THREE.PointLightHelper(pointLight, 70);
+        scene.add(pointLightHelper);
+
+        // 共通マテリアル
+        const material = new THREE.MeshNormalMaterial();
+        // Box
+        for (let i = 0; i < CELL_NUM; i++) {
+          for (let j = 0; j < CELL_NUM; j++) {
+            for (let k = 0; k < CELL_NUM; k++) {
+              // 立方体個別の要素を作成
+              const mesh = new THREE.Mesh(new THREE.BoxGeometry(5, 5, 5), material);
+
+              // XYZ座標を設定
+              mesh.position.set(10 * (i - CELL_NUM / 2), 10 * (j - CELL_NUM / 2), 10 * (k - CELL_NUM / 2));
+
+              // メッシュを3D空間に追加
+              container.add(mesh);
+            }
+          }
+        }
+
+        // フレームレートの数値を画面に表示
+        const stats = new Stats();
+        stats.domElement.style.position = 'absolute';
+        stats.domElement.style.top = '0px';
+        document.body.appendChild(stats.domElement);
+
+        tick();
+
+        // 毎フレーム時に実行されるループイベントです
+        function tick() {
+          container.rotation.x += Math.PI / 180;
+          container.rotation.y += Math.PI / 180;
+
+            // ライトを周回させる
+            pointLight.position.set(
+            500 * Math.sin(Date.now() / 500),
+            500 * Math.sin(Date.now() / 1000),
+            500 * Math.cos(Date.now() / 500)
+          );
+
+          // レンダリング
+          renderer.render(scene, camera);
+
+          // レンダリング情報を画面に表示
+          document.getElementById('info').innerHTML = JSON.stringify(renderer.info.render, '', '    ');
+
+          // フレームレートを表示
+          stats.update();
+
+          requestAnimationFrame(tick);
+        }
+        // 初期化のために実行
+   onResize();
+   // リサイズイベント発生時に実行
+   window.addEventListener('resize', onResize);
+
+   function onResize() {
+     // サイズを取得
+     const width = window.innerWidth;
+     const height = window.innerHeight;
+
+     // レンダラーのサイズを調整する
+     renderer.setPixelRatio(window.devicePixelRatio);
+     renderer.setSize(width, height);
+
+     // カメラのアスペクト比を正す
+     camera.aspect = width / height;
+     camera.updateProjectionMatrix();
+   }
+      }
+    </script>
+  </head>
+  <style>
+
+.example {/*親div*/
+  position: relative;/*相対配置*/
+  }
+
+.example p {
+    position: absolute;
+  top: 50%;
+  left: 50%;
+  -ms-transform: translate(-50%,-50%);
+  -webkit-transform: translate(-50%,-50%);
+  transform: translate(-50%,-50%);
+  margin:0;
+  padding:0;
+  /*文字の装飾は省略*/
+  color: rgba(20, 77, 233, 0.993);/*文字は白に*/
+  font-weight: bold; /*太字に*/
+  font-size: 600%;/*サイズ2倍*/
+  /* font-family :Quicksand, sans-serif; */
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  }
+  nav {
+	background-color: #92898946;
+	color: rgb(0, 0, 0);
+	position: fixed;
+	width: 100%;
+}
+nav ul {
+	display: flex;
+	flex-flow: row;
+	justify-content: center;
+	margin: 0;
+	padding: 6px;
+	list-style-type: none;
+}
+nav a {
+	display: block;
+	border-radius: 4px;
+	padding: 12px 24px;
+	color: rgb(226, 110, 15);
+	text-decoration: none;
+  font-size: 200%;
+}
+nav li a:hover {
+	background-color: #8cae47;
+}
+#myCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      background: url(imgs/tokei.jpeg) no-repeat center center ;
+      background-size: cover;
+    }
+    #body{
+  margin: 0;
+  overflow: hidden;
+  
+}
+  </style>
+  <body>
+    <div class="example">
+      <nav class="regular">
+        <ul>
+          <li><a href="threeJS_5.html">Donut</a></li>
+          <li><a href="threeJS_6.html">SUN</a></li>
+          <li><a href="threeJS_3.html">Earth</a></li>
+          <li><a href="threeJS_10.html">universe</a></li>
+          <li><a href="index.html">Moon</a></li>
+        </ul>
+        </nav>
+      
+      <canvas id="myCanvas"></canvas>
+      <p>Cube </p>	
+  　</div>
+    <pre id="info"></pre>
+  </body>
+</html>
